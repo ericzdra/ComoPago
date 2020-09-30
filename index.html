@@ -22,7 +22,50 @@
             ComoPago
         </a>
     </nav>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 mt-3">
+                <h1 class="text-center">Pagá de manera inteligente</h1>
+            </div>
+        </div>
+    </div>
 
+    <div class="container rounded border border-primary">
+        <form>
+            <div class="form-row mt-3">
+                <div class="form-group col-md-6">
+                    <label for="fullPayment">¿Cuanto te sale el pago al contado (o en 1 sola cuota)?</label>
+                    <input type="number" step="0.01" class="form-control" id="fullPayment">
+                    <small id="passwordHelpInline" class="text-muted">
+                        Ingresá el monto sin signos, y recordá que podés ingresar hasta 2 decimales.
+                    </small>
+                </div>
+            </div>
+            <div class="form-row mt-3">
+                <div class="form-group col-md-6">
+                    <label for="paymentAmount">Ingresá la cantidad de cuotas</label>
+                    <input type="number" class="form-control" id="paymentAmount">
+                </div>
+            </div>
+            <div class="form-row mt-3">
+                <div class="form-group col-md-3">
+                    <label for="paymentValue">Ingresá el valor de cada cuota</label>
+                    <input type="number" step="0.01" class="form-control" id="paymentValue">
+                </div>
+                <div class="form-group col-md-3">
+                    <label for="paymentTotal">Ingresá el monto final financiado</label>
+                    <input type="number" step="0.01" class="form-control" id="paymentTotal">
+                </div>
+            </div>
+            <div class="form-row mt-3">
+                <div class="form-group col-md-6">
+                    <label for="averageMonthlyInflation">Ingresá la inflación mensual</label>
+                    <input type="number" step="0.1" class="form-control" id="averageMonthlyInflation">
+                </div>
+            </div>
+            <button type="submit" class="btn btn-primary mb-3">¿Como pago?</button>
+        </form>
+    </div>
 
     <script src="js/script.js"></script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"

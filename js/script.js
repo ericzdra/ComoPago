@@ -1,15 +1,42 @@
+sessionStorage.clear()
+
+var onePaymentPrice
+var paymentsQ
+var paymentsPrice
+var monthlyInflation
 
 
+var time = 0;
 
-var onePaymentPrice = parseFloat(prompt("Ingresá el precio del producto en 1 pago (pago al contado)"));
-var paymentsQ = parseInt(prompt("Ingresá la cantidad de cuotas que te ofrecen"));
-var paymentsPrice = parseFloat(prompt("Ingresá cuanto te sale cada cuota"));
-var monthlyInflation = parseFloat(prompt("Ingresá la inflación mensual promedio"))
-var myPayment = new Payment(paymentsQ, paymentsPrice, 0 ,monthlyInflation)
-console.log(myPayment)
+var interval = setInterval(function () {
+    if ((!paymentsQ && !paymentsPrice && !monthlyInflation) && time < 4) {
 
+        paymentsQ = document.getElementById("paymentAmount").value
+        paymentsPrice = document.getElementById("paymentValue").value
+        monthlyInflation = document.getElementById("averageMonthlyInflation").value
 
+        time++
+    }
+    else if (time == 4) {
+        clearInterval(interval)
+        var noSubmission = document.createElement("h2")
+        noSubmission.innerHTML = "No se ingresaron valores"
+        noSubmission.setAttribute("class", "text-center")
+        document.getElementById("resultingText").appendChild(noSubmission)
 
+    }
+    else {
+        var myPayment = new Payment(paymentsQ, paymentsPrice, 0, monthlyInflation)
+        console.log(myPayment)
+        for (var index = 0; index < myPayment.adjustedPayment.length; index++) {
+            var submission = document.createElement("div")
+            submission.innerHTML = myPayment.adjustedPayment[index].toFixed(2)
+            submission.setAttribute("class", "d-inline p-2 bg-dark text-white")
+            document.getElementById("resultingText").appendChild(submission)
+        }
+        clearInterval(interval)
+    }
+}, 5000);
 
 
 function Payment(paymentsAmount, paymentsValue, paymentsTotal, inflation) {
@@ -30,7 +57,7 @@ function Payment(paymentsAmount, paymentsValue, paymentsTotal, inflation) {
     this.adjustedPaymentTotal = this.adjustedPayment.reduce(adjustedPaymentSum)
 
     function adjustedPaymentSum(a, b) {
-        return a+b
+        return a + b
     }
 
 }

@@ -1,12 +1,15 @@
 sessionStorage.clear()
 
+const normalBorder = "#ced4da"
+
 var onePaymentPrice
 var paymentsQ
 var paymentsPrice
 var monthlyInflation
 
+document.getElementById("comoPago").onclick = createPayment
 
-var time = 0;
+/* var time = 0;
 
 var interval = setInterval(function () {
     if ((!paymentsQ && !paymentsPrice && !monthlyInflation) && time < 4) {
@@ -36,8 +39,51 @@ var interval = setInterval(function () {
         }
         clearInterval(interval)
     }
-}, 5000);
+}, 5000); */
 
+function createPayment() {
+    var myPaymentVariables = new PaymentVariables(
+        document.getElementById("fullPayment").value,
+        document.getElementById("paymentAmount").value,
+        document.getElementById("paymentValue").value,
+        document.getElementById("averageMonthlyInflation").value
+    )
+    if (validateInput(myPaymentVariables)) {
+        return
+    }
+
+    var myPayment = new Payment(myPaymentVariables.paymentAmount, myPaymentVariables.paymentValue, 0, myPaymentVariables.averageMonthlyInflation)
+
+    console.log(myPayment)
+}
+
+function validateInput(variables) {
+    let bad = false
+    for (let index = 0; index < Object.entries(variables).length; index++) {
+       
+        if (!Object.entries(variables)[index][1]) {
+            console.log("bad")
+            console.log(Object.entries(variables)[index][0])
+            document.getElementById(Object.entries(variables)[index][0]).style.borderColor = "red"
+            bad = true
+
+        } else {
+            console.log("good")
+            console.log(Object.entries(variables)[index][0])
+            document.getElementById(Object.entries(variables)[index][0]).style.borderColor = normalBorder
+        }
+
+    }
+    return bad
+}
+
+
+function PaymentVariables(fullPayment, paymentAmount, paymentValue, averageMonthlyInflation) {
+    this.fullPayment = fullPayment
+    this.paymentAmount = paymentAmount
+    this.paymentValue = paymentValue
+    this.averageMonthlyInflation = averageMonthlyInflation
+}
 
 function Payment(paymentsAmount, paymentsValue, paymentsTotal, inflation) {
     this.pQ = paymentsAmount
@@ -61,5 +107,4 @@ function Payment(paymentsAmount, paymentsValue, paymentsTotal, inflation) {
     }
 
 }
-
 

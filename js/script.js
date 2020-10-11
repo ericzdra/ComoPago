@@ -2,12 +2,123 @@ sessionStorage.clear()
 
 const normalBorder = "#ced4da"
 
-var onePaymentPrice
-var paymentsQ
-var paymentsPrice
-var monthlyInflation
-
 document.getElementById("comoPago").onclick = createPayment
+
+function createPayment() {
+    var myPaymentVariables = new PaymentVariables(
+        document.getElementById("fullPayment").value,
+        document.getElementById("paymentAmount").value,
+        document.getElementById("paymentValue").value,
+        document.getElementById("averageMonthlyInflation").value
+    )
+    if (validateInput(myPaymentVariables)) {
+        return
+    }
+
+    var myPayment = new Payment(myPaymentVariables.paymentAmount, myPaymentVariables.paymentValue, 0, myPaymentVariables.averageMonthlyInflation)
+    graphGenerator(myPayment.adjustedPayment, myPayment.pQall)
+    console.log(myPayment)
+    console.log(myPayment.adjustedPayment)
+}
+
+function validateInput(variables) {
+    let bad = false
+    for (let index = 0; index < Object.entries(variables).length; index++) {
+
+        if (!Object.entries(variables)[index][1]) {
+            console.log("bad")
+            console.log(Object.entries(variables)[index][0])
+            document.getElementById(Object.entries(variables)[index][0]).style.borderColor = "red"
+            bad = true
+
+        } else {
+            console.log("good")
+            console.log(Object.entries(variables)[index][0])
+            document.getElementById(Object.entries(variables)[index][0]).style.borderColor = normalBorder
+        }
+
+    }
+    return bad
+}
+
+function graphGenerator(adjustedPayment, paymentsAmount) {
+    var ctx = document.getElementById('myChart');
+    var myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: paymentsAmount,
+            dataset: [{
+                label: "Probando Dataset",
+                backgroundColor: "#eb4034",
+                borderColor: "#eb4034",
+                data: adjustedPayment
+            }]
+        },
+        options: {
+            responsive: true,
+            title: {
+                display: true,
+                text: 'Chart.js Line Chart'
+            },
+            tooltips: {
+                mode: 'index',
+                intersect: false,
+            },
+            hover: {
+                mode: 'nearest',
+                intersect: true
+            },
+            scales: {
+                xAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Month'
+                    }
+                }],
+                yAxes: [{
+                    display: true,
+                    scaleLabel: {
+                        display: true,
+                        labelString: 'Value'
+                    }
+                }]
+            }
+        }
+
+    })
+}
+function PaymentVariables(fullPayment, paymentAmount, paymentValue, averageMonthlyInflation) {
+    this.fullPayment = fullPayment
+    this.paymentAmount = paymentAmount
+    this.paymentValue = paymentValue
+    this.averageMonthlyInflation = averageMonthlyInflation
+}
+
+function Payment(paymentsAmount, paymentsValue, paymentsTotal, inflation) {
+    this.pQ = paymentsAmount
+    this.pQall = []
+    this.pV = paymentsValue
+    this.pT = paymentsTotal
+    this.i = inflation
+    this.adjustedPayment = []
+    this.notAdjustedPayment = []
+    this.adjustedPaymentTotal = 0;
+    for (let index = 0; index < this.pQ; index++) {
+        this.notAdjustedPayment.push(this.pV)
+        this.pQall.push(index + 1)
+    }
+    for (let index = 0; index < this.notAdjustedPayment.length; index++) {
+        this.adjustedPayment.push(((this.pV) / Math.pow((1 + (this.i / 100)), index)).toFixed(2))
+    }
+
+    this.adjustedPaymentTotal = this.adjustedPayment.reduce(adjustedPaymentSum)
+
+    function adjustedPaymentSum(a, b) {
+        return a + b
+    }
+
+}
 
 /* var time = 0;
 
@@ -40,71 +151,3 @@ var interval = setInterval(function () {
         clearInterval(interval)
     }
 }, 5000); */
-
-function createPayment() {
-    var myPaymentVariables = new PaymentVariables(
-        document.getElementById("fullPayment").value,
-        document.getElementById("paymentAmount").value,
-        document.getElementById("paymentValue").value,
-        document.getElementById("averageMonthlyInflation").value
-    )
-    if (validateInput(myPaymentVariables)) {
-        return
-    }
-
-    var myPayment = new Payment(myPaymentVariables.paymentAmount, myPaymentVariables.paymentValue, 0, myPaymentVariables.averageMonthlyInflation)
-
-    console.log(myPayment)
-}
-
-function validateInput(variables) {
-    let bad = false
-    for (let index = 0; index < Object.entries(variables).length; index++) {
-       
-        if (!Object.entries(variables)[index][1]) {
-            console.log("bad")
-            console.log(Object.entries(variables)[index][0])
-            document.getElementById(Object.entries(variables)[index][0]).style.borderColor = "red"
-            bad = true
-
-        } else {
-            console.log("good")
-            console.log(Object.entries(variables)[index][0])
-            document.getElementById(Object.entries(variables)[index][0]).style.borderColor = normalBorder
-        }
-
-    }
-    return bad
-}
-
-
-function PaymentVariables(fullPayment, paymentAmount, paymentValue, averageMonthlyInflation) {
-    this.fullPayment = fullPayment
-    this.paymentAmount = paymentAmount
-    this.paymentValue = paymentValue
-    this.averageMonthlyInflation = averageMonthlyInflation
-}
-
-function Payment(paymentsAmount, paymentsValue, paymentsTotal, inflation) {
-    this.pQ = paymentsAmount
-    this.pV = paymentsValue
-    this.pT = paymentsTotal
-    this.i = inflation
-    this.adjustedPayment = []
-    this.notAdjustedPayment = []
-    this.adjustedPaymentTotal = 0;
-    for (var index = 0; index < this.pQ; index++) {
-        this.notAdjustedPayment.push(this.pV)
-    }
-    for (var index = 0; index < this.notAdjustedPayment.length; index++) {
-        this.adjustedPayment.push(((this.pV) / Math.pow((1 + (this.i / 100)), index)))
-    }
-
-    this.adjustedPaymentTotal = this.adjustedPayment.reduce(adjustedPaymentSum)
-
-    function adjustedPaymentSum(a, b) {
-        return a + b
-    }
-
-}
-

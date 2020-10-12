@@ -42,20 +42,19 @@ function validateInput(variables) {
 }
 
 function graphGenerator(adjustedPayment, paymentsAmount) {
-    var ctx = document.getElementById('myChart')
-    var myChart = new Chart(ctx, {
-        type: "line",
+    var ctx = document.getElementById("myChart").getContext("2d")
+    var chart = new Chart(ctx, {
+        type: 'line',
+
         data: {
             labels: paymentsAmount,
-            dataset: [{
-                label: "Probando Dataset",
-                data: adjustedPayment,
-                backgroundColor: "rgba(255, 99, 132, 0.2)",
-                borderColor: "rgba(255, 99, 132, 1)",
-                borderWidth: 1
+            datasets: [{
+                label: "Cuota ajustada por inflación",
+                borderColor: "rgb(69, 123, 157)",
+                data: adjustedPayment
             }]
         },
-
+        options: {}
     })
 }
 
@@ -91,34 +90,3 @@ function Payment(paymentsAmount, paymentsValue, paymentsTotal, inflation) {
 
 }
 
-/* var time = 0;
-
-var interval = setInterval(function () {
-    if ((!paymentsQ && !paymentsPrice && !monthlyInflation) && time < 4) {
-
-        paymentsQ = document.getElementById("paymentAmount").value
-        paymentsPrice = document.getElementById("paymentValue").value
-        monthlyInflation = document.getElementById("averageMonthlyInflation").value
-
-        time++
-    }
-    else if (time == 4) {
-        clearInterval(interval)
-        var noSubmission = document.createElement("h2")
-        noSubmission.innerHTML = "No se ingresaron valores"
-        noSubmission.setAttribute("class", "text-center")
-        document.getElementById("resultingText").appendChild(noSubmission)
-
-    }
-    else {
-        var myPayment = new Payment(paymentsQ, paymentsPrice, 0, monthlyInflation)
-        console.log(myPayment)
-        for (var index = 0; index < myPayment.adjustedPayment.length; index++) {
-            var submission = document.createElement("div")
-            submission.innerHTML = myPayment.adjustedPayment[index].toFixed(2)
-            submission.setAttribute("class", "d-inline p-2 bg-dark text-white")
-            document.getElementById("resultingText").appendChild(submission)
-        }
-        clearInterval(interval)
-    }
-}, 5000); */

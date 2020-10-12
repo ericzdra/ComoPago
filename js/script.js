@@ -42,52 +42,23 @@ function validateInput(variables) {
 }
 
 function graphGenerator(adjustedPayment, paymentsAmount) {
-    var ctx = document.getElementById('myChart');
+    var ctx = document.getElementById('myChart')
     var myChart = new Chart(ctx, {
-        type: 'line',
+        type: "line",
         data: {
             labels: paymentsAmount,
             dataset: [{
                 label: "Probando Dataset",
-                backgroundColor: "#eb4034",
-                borderColor: "#eb4034",
-                data: adjustedPayment
+                data: adjustedPayment,
+                backgroundColor: "rgba(255, 99, 132, 0.2)",
+                borderColor: "rgba(255, 99, 132, 1)",
+                borderWidth: 1
             }]
         },
-        options: {
-            responsive: true,
-            title: {
-                display: true,
-                text: 'Chart.js Line Chart'
-            },
-            tooltips: {
-                mode: 'index',
-                intersect: false,
-            },
-            hover: {
-                mode: 'nearest',
-                intersect: true
-            },
-            scales: {
-                xAxes: [{
-                    display: true,
-                    scaleLabel: {
-                        display: true,
-                        labelString: 'Month'
-                    }
-                }],
-                yAxes: [{
-                    display: true,
-                    scaleLabel: {
-                        display: true,
-                        labelString: 'Value'
-                    }
-                }]
-            }
-        }
 
     })
 }
+
 function PaymentVariables(fullPayment, paymentAmount, paymentValue, averageMonthlyInflation) {
     this.fullPayment = fullPayment
     this.paymentAmount = paymentAmount

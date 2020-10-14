@@ -6,6 +6,7 @@ function PaymentVariables(fullPayment, paymentAmount, paymentValue, averageMonth
 }
 
 function Payment(paymentsAmount, paymentsValue, paymentsTotal, inflation) {
+    this.creationDate = timeSet()
     this.pQ = paymentsAmount
     this.pQall = []
     this.pV = paymentsValue
@@ -15,6 +16,8 @@ function Payment(paymentsAmount, paymentsValue, paymentsTotal, inflation) {
     this.notAdjustedPayment = []
     this.adjustedPaymentTotal = 0;
     this.saved = false
+
+
     for (let index = 0; index < this.pQ; index++) {
         this.notAdjustedPayment.push(this.pV)
         this.pQall.push(index + 1)

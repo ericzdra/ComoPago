@@ -16,6 +16,7 @@ function Payment(paymentsAmount, paymentsValue, paymentsTotal, inflation) {
     this.notAdjustedPayment = []
     this.adjustedPaymentTotal = 0;
     this.saved = false
+    this.plotted = false
 
 
     for (let index = 0; index < this.pQ; index++) {

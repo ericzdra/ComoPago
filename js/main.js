@@ -1,7 +1,9 @@
 document.getElementById("comoPago").onclick = createPayment
 
-loadRecord(localStorage.paymentRecord)
-
+if (localStorage.paymentRecord) {
+    reloadingPage = true
+    loadRecord(localStorage.paymentRecord, true)
+}
 
 
 

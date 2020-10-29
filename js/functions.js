@@ -256,17 +256,18 @@ function resultText(payment, hide) {
                 result = Object.entries(output)[index][1]
             }
         }
+        if (hide == undefined) {
+            $("#method").toggleClass("d-none", false)
+        } else {
+            $("#method").toggleClass("d-none", true)
+        }
+    
+        $("#method").children().text(result)
     })
 
 
 
-    if (hide == undefined) {
-        $("#method").toggleClass("d-none", false)
-    } else {
-        $("#method").toggleClass("d-none", true)
-    }
-
-    $("#method").children().text(result)
+    
 
 
 

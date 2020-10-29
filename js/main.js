@@ -1,9 +1,10 @@
 document.getElementById("comoPago").onclick = createPayment
+$("#method").toggleClass("d-none", true)
 
 if (localStorage.paymentRecord) {
-    reloadingPage = true
     loadRecord(localStorage.paymentRecord, true)
 }
+
 
 
 

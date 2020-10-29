@@ -1,6 +1,6 @@
 function createPayment() {
     var myPaymentVariables = new PaymentVariables(
-        $("#fullPayment").val(),
+        $("#cash").val(),
         $("#paymentAmount").val(),
         $("#paymentValue").val(),
         $("#averageMonthlyInflation").val()
@@ -9,13 +9,14 @@ function createPayment() {
         return
     }
 
-    var myPayment = new Payment(myPaymentVariables.paymentAmount, myPaymentVariables.paymentValue, 0, myPaymentVariables.averageMonthlyInflation)
+    var myPayment = new Payment(myPaymentVariables.paymentAmount, myPaymentVariables.paymentValue, myPaymentVariables.cash, myPaymentVariables.averageMonthlyInflation)
     if (localStorage.paymentRecord) {
         unselectRecord()
     }
     graphGenerator(myPayment.adjustedPayment, myPayment.pQall)
     storagedPayments.push(JSON.stringify(myPayment))
     localStorage.paymentRecord = JSON.stringify(storagedPayments)
+    firstTime = true
     updateRecord(localStorage.paymentRecord)
 }
 
@@ -24,11 +25,11 @@ function validateInput(variables) {
     for (let index = 0; index < Object.entries(variables).length; index++) {
 
         if (!Object.entries(variables)[index][1]) {
-            document.getElementById(Object.entries(variables)[index][0]).style.borderColor = "red"
+            $(`#${Object.entries(variables)[index][0]}`).css("border-color", "red")
             bad = true
 
         } else {
-            document.getElementById(Object.entries(variables)[index][0]).style.borderColor = normalBorder
+            $(`#${Object.entries(variables)[index][0]}`).css("border-color", normalBorder)
         }
 
     }
@@ -79,11 +80,13 @@ function loadRecord(stgPayments, clean) {
     if (clean) {
         unselectRecord()
     }
+    if (records.length == 0) {
+        $("#nothingToShow").toggleClass("d-none", false)
+    }
 
     for (let index = 0; index < records.length; index++) {
         let recordContent = JSON.parse(records[index])
         let idOrderN = "Payment" + index
-
         if (recordContent.saved) {
             spawnRecord(recordContent, idOrderN, clean)
         }
@@ -93,6 +96,11 @@ function loadRecord(stgPayments, clean) {
 }
 
 function spawnRecord(recordContent, idOrderN, clean) {
+    $("#nothingToShow").toggleClass("d-none", true)
+    if (!clean && firstTime) {
+        resultText(recordContent)
+    }
+
     $("#records").append($("<li></li>").attr({
         id: idOrderN,
         class: "list-group-item d-flex bd-highlight"
@@ -106,6 +114,7 @@ function spawnRecord(recordContent, idOrderN, clean) {
     } else {
         $(`#${idOrderN}`).toggleClass("active", false)
     }
+    firstTime = false
 }
 
 function deleteRecord() {
@@ -120,11 +129,13 @@ function deleteRecord() {
             storagedPayments.splice(index, 1)
             $(`#${idOrderN}`).remove()
             if (recordContent.plotted) {
-                $("#fullPayment").val("")
+                $("#cash").val("")
                 $("#paymentAmount").val("")
                 $("#paymentValue").val("")
                 $("#averageMonthlyInflation").val("")
+                resultText(recordContent, true)
             }
+
         }
 
     }
@@ -151,12 +162,13 @@ function reloadRecord() {
             unselectRecord()
             $(`#${recordId}`).toggleClass("active", true)
             graphGenerator(recordContent.adjustedPayment, recordContent.pQall)
-            $("#fullPayment").val(0)
+            $("#cash").val(recordContent.cash)
             $("#paymentAmount").val(recordContent.pQ)
             $("#paymentValue").val(recordContent.pV)
             $("#averageMonthlyInflation").val(recordContent.i)
             recordContent.plotted = true
             storagedPayments[index] = JSON.stringify(recordContent)
+            resultText(recordContent)
         }
 
     }
@@ -220,4 +232,20 @@ function unselectRecord() {
         $(`#${idOrderN}`).toggleClass("active", false)
     }
     localStorage.paymentRecord = JSON.stringify(storagedPayments)
+}
+
+function resultText(payment, hide) {
+    let result
+    for (let index = 0; index < Object.entries(methodText).length; index++) {
+        if (payment.method == Object.entries(methodText)[index][0]) {
+            result = Object.entries(methodText)[index][1]
+        }
+    }
+    if (hide == undefined) {
+        $("#method").toggleClass("d-none", false)
+    } else {
+        $("#method").toggleClass("d-none", true)
+    }
+
+    $("#method").children().text(result)
 }

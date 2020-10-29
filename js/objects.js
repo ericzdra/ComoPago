@@ -1,22 +1,23 @@
-function PaymentVariables(fullPayment, paymentAmount, paymentValue, averageMonthlyInflation) {
-    this.fullPayment = fullPayment
+function PaymentVariables(cash, paymentAmount, paymentValue, averageMonthlyInflation) {
+    this.cash = cash
     this.paymentAmount = paymentAmount
     this.paymentValue = paymentValue
     this.averageMonthlyInflation = averageMonthlyInflation
 }
 
-function Payment(paymentsAmount, paymentsValue, paymentsTotal, inflation) {
+function Payment(paymentsAmount, paymentsValue, cash, inflation) {
     this.creationDate = timeSet()
+    this.cash = cash
     this.pQ = paymentsAmount
     this.pQall = []
     this.pV = paymentsValue
-    this.pT = paymentsTotal
     this.i = inflation
     this.adjustedPayment = []
     this.notAdjustedPayment = []
     this.adjustedPaymentTotal = 0;
     this.saved = false
     this.plotted = false
+    this.method = ""
 
 
     for (let index = 0; index < this.pQ; index++) {
@@ -29,8 +30,17 @@ function Payment(paymentsAmount, paymentsValue, paymentsTotal, inflation) {
 
     this.adjustedPaymentTotal = this.adjustedPayment.reduce(adjustedPaymentSum)
 
+    if ((this.adjustedPaymentTotal/this.cash) < 1) {
+        this.method = "credit"
+        
+    }else if ((this.adjustedPaymentTotal/this.cash) == 1) {
+        this.method = "same"
+    }else{
+        this.method = "cash"
+    }
+
     function adjustedPaymentSum(a, b) {
-        return a + b
+        return parseFloat(a) + parseFloat(b)
     }
 
 }

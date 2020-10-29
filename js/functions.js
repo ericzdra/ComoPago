@@ -74,7 +74,7 @@ function updateRecord(stgPayments) {
 
 }
 
-function loadRecord(stgPayments, clean) {
+function loadRecord(stgPayments, clean, noAnim) {
     let records = JSON.parse(stgPayments)
 
     if (clean) {
@@ -88,23 +88,31 @@ function loadRecord(stgPayments, clean) {
         let recordContent = JSON.parse(records[index])
         let idOrderN = "Payment" + index
         if (recordContent.saved) {
-            spawnRecord(recordContent, idOrderN, clean)
+            spawnRecord(recordContent, idOrderN, clean, noAnim)
         }
     }
 
 
 }
 
-function spawnRecord(recordContent, idOrderN, clean) {
+function spawnRecord(recordContent, idOrderN, clean, noAnim) {
     $("#nothingToShow").toggleClass("d-none", true)
     if (!clean && firstTime) {
         resultText(recordContent)
     }
 
-    $("#records").append($("<li></li>").attr({
-        id: idOrderN,
-        class: "list-group-item d-flex bd-highlight"
-    }))
+    if (noAnim) {
+        $("#records").append($("<li></li>").attr({
+            id: idOrderN,
+            class: "list-group-item d-flex bd-highlight"
+        }))
+    } else {
+        $("#records").append($("<li></li>").attr({
+            id: idOrderN,
+            class: "animate__animated animate__slideInDown animate__faster list-group-item d-flex bd-highlight"
+        }))
+    }
+
     $(`#${idOrderN}`).append($("<p></p>").attr("class", "mr-auto mb-0 mt-0 align-self-center bd-highlight"))
     $(`#${idOrderN}`).children("p").text(recordContent.creationDate)
     $(`#${idOrderN}`).append(reloadButton())
@@ -120,6 +128,7 @@ function spawnRecord(recordContent, idOrderN, clean) {
 function deleteRecord() {
     storagedPayments = JSON.parse(localStorage.paymentRecord)
     let recordId = this.parentNode.id
+
 
     for (let index = 0; index < storagedPayments.length; index++) {
         let recordContent = JSON.parse(storagedPayments[index])
@@ -139,13 +148,13 @@ function deleteRecord() {
         }
 
     }
+
     while ($("#records").children().length) {
         $("#records").empty()
     }
+
     localStorage.paymentRecord = JSON.stringify(storagedPayments)
-    loadRecord(localStorage.paymentRecord)
-
-
+    loadRecord(localStorage.paymentRecord, false, true)
 }
 
 function reloadRecord() {
@@ -236,11 +245,21 @@ function unselectRecord() {
 
 function resultText(payment, hide) {
     let result
-    for (let index = 0; index < Object.entries(methodText).length; index++) {
-        if (payment.method == Object.entries(methodText)[index][0]) {
-            result = Object.entries(methodText)[index][1]
+
+    $.ajax({
+        url: "/js/methodText.json",
+        method: "GET",
+        dataType: "json"
+    }).done(function (output) {
+        for (let index = 0; index < Object.entries(output).length; index++) {
+            if (payment.method == Object.entries(output)[index][0]) {
+                result = Object.entries(output)[index][1]
+            }
         }
-    }
+    })
+
+
+
     if (hide == undefined) {
         $("#method").toggleClass("d-none", false)
     } else {
@@ -248,4 +267,7 @@ function resultText(payment, hide) {
     }
 
     $("#method").children().text(result)
+
+
+
 }
